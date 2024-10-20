@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
 @Autonomous
 
 public class AutoPractice extends LinearOpMode{
@@ -12,6 +14,7 @@ public class AutoPractice extends LinearOpMode{
     private DcMotor backLeft;
     private DcMotor frontRight;
     private DcMotor backRight;
+    private Servo pincher;
 
     public void runOpMode() {
         //defines motors
@@ -19,11 +22,15 @@ public class AutoPractice extends LinearOpMode{
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+        pincher = hardwareMap.get(Servo.class, "pincher");
         waitForStart();
 
         while (opModeIsActive()){
             sidewaysRight(0.5);
-            sleep(1000);
+            sleep(500);
+            stopMotors();
+            driveForward(0.5);
+            sleep(500);
             stopMotors();
         }
 
@@ -71,6 +78,10 @@ public class AutoPractice extends LinearOpMode{
         frontRight.setPower(speed);
         backRight.setPower(-speed);
     }
+    public void openPincher(){
+
+    }
+
 
 }
 
