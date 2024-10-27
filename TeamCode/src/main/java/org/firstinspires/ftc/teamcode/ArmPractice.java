@@ -9,39 +9,58 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ArmPractice extends LinearOpMode {
     private DcMotor elevator;
     private Servo pincher;
-    public void runOpMode(){
+    public void runOpMode() {
         pincher = hardwareMap.get(Servo.class, "pincher");
         elevator = hardwareMap.get(DcMotor.class, "elevator");
+        elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevator.setTargetPosition(0);
+        elevator.setDirection(DcMotor.Direction.REVERSE);
         elevator.setMode((DcMotor.RunMode.RUN_TO_POSITION));
-        pincher.setPosition(0);
+        int numClicks = 0;
+        pincher.setPosition(0.8);
 
         waitForStart();
-        if(gamepad1.y){
-            raiseElevator();
-        }
-        if(gamepad1.a){
-            setElevatorGrabbingPosition();
-        }
-        if(gamepad1.x){
-            openPincher();
-        }
-        if(gamepad1.b){
-            closePincher();
+        while (opModeIsActive()) {
+            if (gamepad1.y) {
+                raiseElevator();
+            }
+
+            if (gamepad1.a) {
+                setElevatorGrabbingPosition();
+            }
+            if (gamepad1.x) {
+                numClicks++;
+                sleep(200);
+                openPincher(numClicks);
+            }
+            if (gamepad1.b) {
+                closePincher();
+            }
         }
     }
     public void setElevatorGrabbingPosition(){
-        elevator.setTargetPosition(30);
         elevator.setPower(.5);
+        elevator.setTargetPosition(149);
     }
     public void raiseElevator(){
-        elevator.setTargetPosition(60);
-        elevator.setPower(.5);
+        elevator.setPower(1);
+        elevator.setTargetPosition(1400);
     }
-    public void openPincher(){
-        pincher.setPosition(0.5);
+    public void releaseElevator(){
+        elevator.setPower(1);
+        elevator.setTargetPosition(1000);
+    }
+
+    public void openPincher(int numClicks){
+        if(numClicks%2 ==0){
+            pincher.setPosition(.8);
+        }
+        else{
+            pincher.setPosition(.3);
+        }
+
     }
     public void closePincher(){
-        pincher.setPosition(0.0);
+        pincher.setPosition(0.3);
     }
 }

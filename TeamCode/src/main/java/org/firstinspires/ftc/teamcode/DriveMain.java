@@ -12,6 +12,8 @@ public class DriveMain extends LinearOpMode {
     private DcMotor backLeft;
     private DcMotor frontRight;
     private DcMotor backRight;
+    private DcMotor elevator;
+    private Servo pincher;
     //private Servo pincher;
 
     public void runOpMode() {
@@ -20,10 +22,16 @@ public class DriveMain extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        //pincher = hardwareMap.get(Servo.class, "pincher");
-        //pincher.setPosition(0.0);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
+        pincher = hardwareMap.get(Servo.class, "pincher");
+        elevator = hardwareMap.get(DcMotor.class, "elevator");
+        elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elevator.setTargetPosition(0);
+        elevator.setDirection(DcMotor.Direction.REVERSE);
+        elevator.setMode((DcMotor.RunMode.RUN_TO_POSITION));
+        int numClicks = 0;
+        pincher.setPosition(0.8);
         waitForStart();
 
         double tgtPowerX = 0.0;
@@ -33,7 +41,7 @@ public class DriveMain extends LinearOpMode {
         boolean isReversed = false;
 
         while (opModeIsActive()){
-            if(gamepad1.a){
+            if(gamepad1.right_bumper){
                 isReversed = !isReversed;
                 sleep(300); //makes sure reverse isn't toggled multiple times
             }
@@ -50,7 +58,22 @@ public class DriveMain extends LinearOpMode {
             //sideways
             tgtPowerSide = gamepad1.left_stick_x;
             driveSideways(tgtPowerSide, isReversed);
+            if(gamepad1.x){
+                releaseElevator();
+            }
 
+            if (gamepad1.y) {
+                raiseElevator();
+            }
+
+            if (gamepad1.a) {
+                setElevatorGrabbingPosition();
+            }
+            if (gamepad1.b) {
+                numClicks++;
+                sleep(200);
+                changePincher(numClicks);
+            }
         }
 
 
@@ -99,6 +122,32 @@ public class DriveMain extends LinearOpMode {
         frontRight.setPower(tgtY+tgtX);
         backLeft.setPower(tgtY+tgtX);
         backRight.setPower(tgtY-tgtX);
+    }
+    public void setElevatorGrabbingPosition(){
+        elevator.setPower(.5);
+        elevator.setTargetPosition(200);
+    }
+    public void raiseElevator(){
+        elevator.setPower(1);
+        elevator.setTargetPosition(1500);
+    }
+    public void releaseElevator(){
+        elevator.setPower(1);
+        elevator.setTargetPosition(1250);
+        sleep(500);
+        pincher.setPosition(0.8);
+        sleep(500);
+        setElevatorGrabbingPosition();
+    }
+
+    public void changePincher(int numClicks){
+        if(numClicks%2 ==0){
+            pincher.setPosition(.8);
+        }
+        else{
+            pincher.setPosition(.3);
+        }
+
     }
 }
 //things i could do: make an array of motors
