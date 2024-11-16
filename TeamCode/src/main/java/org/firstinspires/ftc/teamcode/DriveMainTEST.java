@@ -122,6 +122,19 @@ public class DriveMainTEST extends LinearOpMode {
             if(gamepad2.y){
                 armUp();
             }
+            if (gamepad2.dpad_up){
+                elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                elevator.setPower(0.5);
+
+            }
+            else if (gamepad2.dpad_down){
+                elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                elevator.setPower(-0.5);
+            }
+            else{
+                elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            }
         }
 
 

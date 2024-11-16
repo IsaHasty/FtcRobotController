@@ -110,6 +110,16 @@ public class DriveMain extends LinearOpMode {
             if(gamepad2.y){
                 armUp();
             }
+
+            if (gamepad2.dpad_up){
+                elevator.setPower(0.5);
+            }
+            else if (gamepad2.dpad_down){
+                elevator.setPower(-0.5);
+            }
+            else{
+                elevator.setPower(0);
+            }
         }
 
 

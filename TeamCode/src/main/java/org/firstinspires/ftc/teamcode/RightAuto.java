@@ -49,8 +49,8 @@ public class RightAuto extends LinearOpMode {
             sleep(400);
             stopMotors();
 
-            driveSideways(0.25,false); // Adjust the power value if needed
-            sleep(2200);
+            driveSideways(0.5,false); // Adjust the power value if needed
+            sleep(900);
             stopMotors();
 
             driveStraight(0.25, false);
@@ -74,16 +74,16 @@ public class RightAuto extends LinearOpMode {
             lowerElevator();
             sleep(500);
 
-            driveSideways(-0.3,false); // Adjust the power value if needed
-            sleep(2400);
+            driveSideways(0.5,true); // Adjust the power value if needed
+            sleep(1200);
             stopMotors();
 
             driveStraight(0.25, false);
             sleep(2000);
             stopMotors();
 
-            driveSideways(-0.3,false); // Adjust the power value if needed
-            sleep(1200);
+            driveSideways(0.5,true); // Adjust the power value if needed
+            sleep(700);
             stopMotors();
 
             driveStraight(0.25, true);
@@ -95,11 +95,41 @@ public class RightAuto extends LinearOpMode {
             stopMotors();
 
             turn(0.5);
-            sleep(1450);
+            sleep(1500);
+            stopMotors();
+            sleep(4000);
 
+            setElevatorGrabbingPosition();
+            sleep(300);
 
-            //lowerArm();
-            //sleep(2000);
+            driveStraight(0.25, false);
+            sleep(1400);
+            stopMotors();
+
+            pincher.setPosition(0.35);
+            sleep(400);
+
+            elevator.setTargetPosition(500);
+            elevator.setPower(0.5);
+            sleep(800);
+
+            driveStraight(0.5, true);
+            sleep(300);
+            stopMotors();
+
+            lowerElevator();
+            sleep(400);
+
+            turn(0.5);
+            sleep(1600);
+            stopMotors();
+
+            driveSideways(0.3, true);
+            sleep(800);
+            stopMotors();
+
+            lowerArm();
+            sleep(2000);
 
             // Optionally, you can break the loop if only one sequence is needed
             break;
@@ -169,7 +199,6 @@ public class RightAuto extends LinearOpMode {
         sleep(500);
         pincher.setPosition(0.8);
         sleep(500);
-        setElevatorGrabbingPosition();
     }
 
     public void changePincher(int numClicks){
