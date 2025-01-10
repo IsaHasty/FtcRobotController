@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous
-public class DudAuto extends LinearOpMode {
+public class LeftAuto extends LinearOpMode {
     private DcMotor frontLeft;
     private DcMotor backLeft;
     private DcMotor frontRight;
@@ -45,12 +45,47 @@ public class DudAuto extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()){
-            driveStraight(0.5, false);
-            sleep(250);
+            driveStraight(0.3, false);
+            sleep(400);
+            stopMotors();
+
+            driveSideways(0.5,true); // Adjust the power value if needed
+            sleep(1400);
+            stopMotors();
+
+            driveStraight(0.25, false);
+            sleep(800);
+            stopMotors();
+
+            raiseElevator();
+            sleep(1500);
+
+            driveStraight(0.25, false);
+            sleep(900);
+            stopMotors();
+            releaseElevator();
+            sleep(200);
+            stopMotors();
+
+            driveStraight(.3, true);
+            lowerElevator();
+            sleep(1000);
+            stopMotors();
+
+            turn(.5);
+            sleep(800);
+
+            driveStraight(.3, true);
+            sleep(2100);
+
+            driveSideways(.5, false);
+            sleep(600);
             stopMotors();
 
             lowerArm();
             sleep(2000);
+            elevatorPincher.setPosition(.3);
+            sleep(1000);
 
             // Optionally, you can break the loop if only one sequence is needed
             break;
@@ -116,11 +151,10 @@ public class DudAuto extends LinearOpMode {
     }
     public void releaseElevator(){
         elevator.setPower(1);
-        elevator.setTargetPosition(1250);
+        elevator.setTargetPosition(1150);
         sleep(500);
         elevatorPincher.setPosition(0.8);
         sleep(500);
-        setElevatorGrabbingPosition();
     }
 
     public void changePincher(int numClicks){
@@ -132,14 +166,6 @@ public class DudAuto extends LinearOpMode {
         }
     }
 
-    public void changeIntake(boolean isIntakeTurning){
-        if(isIntakeTurning){
-            intakeGrabber.setPosition(-1);
-        }
-        else{
-            intakeGrabber.setPosition(0);
-        }
-    }
 
     public void armUp(){
         arm.setPower(0.5);
@@ -166,4 +192,5 @@ public class DudAuto extends LinearOpMode {
         backRight.setPower(0);
     }
 }
+
 

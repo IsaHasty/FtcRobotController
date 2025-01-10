@@ -8,15 +8,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous
-public class RedAuto extends LinearOpMode {
+public class ShortLeftAuto extends LinearOpMode {
     private DcMotor frontLeft;
     private DcMotor backLeft;
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor elevator;
-    private Servo pincher;
+    private Servo elevatorPincher;
     private DcMotor arm;
-    private CRServo intake;
+    private Servo intakeGrabber;
 
     public void runOpMode(){
         //defines motors
@@ -26,8 +26,8 @@ public class RedAuto extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
-        pincher = hardwareMap.get(Servo.class, "pincher");
-        intake = hardwareMap.get(CRServo.class, "intake");
+        elevatorPincher = hardwareMap.get(Servo.class, "elevatorPincher");
+        intakeGrabber = hardwareMap.get(Servo.class, "intakeGrabber");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -41,42 +41,47 @@ public class RedAuto extends LinearOpMode {
         elevator.setDirection(DcMotor.Direction.REVERSE);
         elevator.setMode((DcMotor.RunMode.RUN_TO_POSITION));
         int numClicks = 0;
-        pincher.setPosition(0.3);
+        elevatorPincher.setPosition(0.3);
         waitForStart();
 
         while(opModeIsActive()){
-            driveStraight(0.5, false);
-            sleep(100);
+            driveStraight(0.3, false);
+            sleep(400);
             stopMotors();
 
-            driveSideways(-0.5,false); // Adjust the power value if needed
+            driveSideways(0.5,true); // Adjust the power value if needed
             sleep(1400);
             stopMotors();
 
-            driveStraight(0.3, false);
-            sleep(900);
+            driveStraight(0.25, false);
+            sleep(800);
             stopMotors();
 
             raiseElevator();
             sleep(1500);
 
-            driveStraight(0.3, false);
-            sleep(475);
+            driveStraight(0.25, false);
+            sleep(900);
             stopMotors();
             releaseElevator();
-
-            driveStraight(0.3, true);
-            sleep(50);
+            sleep(200);
             stopMotors();
 
+
+            driveStraight(.5, true);
+            sleep(400);
+            stopMotors();
+
+            driveSideways(.5, false);
             lowerElevator();
-            sleep(500);
+            sleep(1800);
+            stopMotors();
+
             lowerArm();
             sleep(2000);
-            pincher.setPosition(0.3);
-            sleep(500);
+            elevatorPincher.setPosition(.3);
+            sleep(1000);
 
-            // Optionally, you can break the loop if only one sequence is needed
             break;
 
         }
@@ -140,28 +145,27 @@ public class RedAuto extends LinearOpMode {
     }
     public void releaseElevator(){
         elevator.setPower(1);
-        elevator.setTargetPosition(1200);
+        elevator.setTargetPosition(1150);
         sleep(500);
-        pincher.setPosition(0.8);
+        elevatorPincher.setPosition(0.8);
         sleep(500);
-        setElevatorGrabbingPosition();
     }
 
     public void changePincher(int numClicks){
         if(numClicks%2 ==0){
-            pincher.setPosition(.8);
+            elevatorPincher.setPosition(.8);
         }
         else{
-            pincher.setPosition(.3);
+            elevatorPincher.setPosition(.3);
         }
     }
 
     public void changeIntake(boolean isIntakeTurning){
         if(isIntakeTurning){
-            intake.setPower(-1);
+            intakeGrabber.setPosition(-1);
         }
         else{
-            intake.setPower(0);
+            intakeGrabber.setPosition(0);
         }
     }
 
@@ -190,4 +194,6 @@ public class RedAuto extends LinearOpMode {
         backRight.setPower(0);
     }
 }
+
+
 

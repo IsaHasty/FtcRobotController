@@ -15,9 +15,9 @@ public class DriveMain extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor elevator;
-    private Servo pincher;
+    private Servo elevatorPincher;
     private DcMotor arm;
-    private CRServo intake;
+    private Servo intakeGrabber;
 
     public void runOpMode() {
         //defines motors
@@ -27,8 +27,8 @@ public class DriveMain extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
-        pincher = hardwareMap.get(Servo.class, "pincher");
-        intake = hardwareMap.get(CRServo.class, "intake");
+        elevatorPincher = hardwareMap.get(Servo.class, "elevatorPincher");
+        intakeGrabber = hardwareMap.get(Servo.class, "intakeGrabber");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
         arm.setDirection(DcMotor.Direction.REVERSE);
@@ -42,7 +42,6 @@ public class DriveMain extends LinearOpMode {
         elevator.setDirection(DcMotor.Direction.REVERSE);
         elevator.setMode((DcMotor.RunMode.RUN_TO_POSITION));
         int numClicks = 0;
-        pincher.setPosition(0.3);
         waitForStart();
 
 
@@ -86,7 +85,7 @@ public class DriveMain extends LinearOpMode {
             if (gamepad1.b) {
                 numClicks++;
                 sleep(200);
-                changePincher(numClicks);
+                changeElevatorPincher(numClicks);
             }
 
             if(gamepad2.b){
@@ -95,8 +94,6 @@ public class DriveMain extends LinearOpMode {
                 changeIntake(isIntakeTurning);
             }
             if(gamepad2.left_bumper){
-                releaseIntake(isIntakeTurningReverse);
-                sleep(200);
                 changeIntake(isIntakeTurning);
             }
 
@@ -186,37 +183,29 @@ public class DriveMain extends LinearOpMode {
         elevator.setPower(0.5);
         elevator.setTargetPosition(1150);
         sleep(500);
-        pincher.setPosition(0.8);
+        //pincher.setPosition(0.8);
         sleep(500);
         setElevatorGrabbingPosition();
     }
 
-    public void changePincher(int numClicks){
+    public void changeElevatorPincher(int numClicks){
         if(numClicks%2 ==0){
-            pincher.setPosition(.8);
+            elevatorPincher.setPosition(.8);
         }
         else{
-            pincher.setPosition(.3);
+            elevatorPincher.setPosition(.3);
         }
     }
 
-    public void changeIntake(boolean isIntakeTurning){
-        if(isIntakeTurning){
-            intake.setPower(-1);
+    public void changeIntake(boolean intakeIsClosed){
+        if(intakeIsClosed){
+            intakeGrabber.setPosition(-1);
         }
         else{
-            intake.setPower(0);
+            intakeGrabber.setPosition(0);
         }
     }
 
-    public void releaseIntake(boolean isIntakeTurning){
-        if(isIntakeTurning){
-            intake.setPower(0);
-        }
-        else{
-            intake.setPower(1);
-        }
-    }
 
     public void armUp(){
         arm.setPower(0.5);

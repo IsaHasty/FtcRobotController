@@ -14,9 +14,9 @@ public class RightAuto extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor elevator;
-    private Servo pincher;
+    private Servo elevatorPincher;
     private DcMotor arm;
-    private CRServo intake;
+    private Servo intakeGrabber;
 
     public void runOpMode(){
         //defines motors
@@ -26,8 +26,8 @@ public class RightAuto extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
-        pincher = hardwareMap.get(Servo.class, "pincher");
-        intake = hardwareMap.get(CRServo.class, "intake");
+        elevatorPincher = hardwareMap.get(Servo.class, "elevatorPincher");
+        intakeGrabber = hardwareMap.get(Servo.class, "intakeGrabber");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -41,16 +41,16 @@ public class RightAuto extends LinearOpMode {
         elevator.setDirection(DcMotor.Direction.REVERSE);
         elevator.setMode((DcMotor.RunMode.RUN_TO_POSITION));
         int numClicks = 0;
-        pincher.setPosition(0.3);
+        elevatorPincher.setPosition(0.3);
         waitForStart();
 
         while(opModeIsActive()){
             driveStraight(0.3, false);
-            sleep(400);
+            sleep(270);
             stopMotors();
 
             driveSideways(0.5,false); // Adjust the power value if needed
-            sleep(900);
+            sleep(800);
             stopMotors();
 
             driveStraight(0.25, false);
@@ -83,7 +83,7 @@ public class RightAuto extends LinearOpMode {
             stopMotors();
 
             driveSideways(0.5,true); // Adjust the power value if needed
-            sleep(700);
+            sleep(600);
             stopMotors();
 
             driveStraight(0.25, true);
@@ -95,18 +95,19 @@ public class RightAuto extends LinearOpMode {
             stopMotors();
 
             turn(0.5);
-            sleep(1500);
+            sleep(1400);
             stopMotors();
             sleep(4000);
 
             setElevatorGrabbingPosition();
             sleep(300);
 
+            //drive to grab second specimen
             driveStraight(0.25, false);
-            sleep(1400);
+            sleep(1725);
             stopMotors();
 
-            pincher.setPosition(0.35);
+            elevatorPincher.setPosition(0.35);
             sleep(400);
 
             elevator.setTargetPosition(500);
@@ -120,12 +121,13 @@ public class RightAuto extends LinearOpMode {
             lowerElevator();
             sleep(400);
 
+            //turn around to park
             turn(0.5);
-            sleep(1600);
+            sleep(1250);
             stopMotors();
 
             driveSideways(0.3, true);
-            sleep(800);
+            sleep(1000);
             stopMotors();
 
             lowerArm();
@@ -197,27 +199,19 @@ public class RightAuto extends LinearOpMode {
         elevator.setPower(1);
         elevator.setTargetPosition(1150);
         sleep(500);
-        pincher.setPosition(0.8);
+        elevatorPincher.setPosition(0.8);
         sleep(500);
     }
 
     public void changePincher(int numClicks){
         if(numClicks%2 ==0){
-            pincher.setPosition(.8);
+            elevatorPincher.setPosition(.8);
         }
         else{
-            pincher.setPosition(.3);
+            elevatorPincher.setPosition(.3);
         }
     }
 
-    public void changeIntake(boolean isIntakeTurning){
-        if(isIntakeTurning){
-            intake.setPower(-1);
-        }
-        else{
-            intake.setPower(0);
-        }
-    }
 
     public void armUp(){
         arm.setPower(0.5);
