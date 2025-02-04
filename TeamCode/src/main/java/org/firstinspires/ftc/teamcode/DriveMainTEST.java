@@ -20,6 +20,7 @@ public class DriveMainTEST extends LinearOpMode {
     private CRServo intakeSpinner;
     //private CRServo armTelescope;
 
+
     public void runOpMode() {
         //defines motors
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -44,6 +45,7 @@ public class DriveMainTEST extends LinearOpMode {
         elevator.setTargetPosition(0);
        // elevator.setDirection(DcMotor.Direction.REVERSE);
         elevator.setMode((DcMotor.RunMode.RUN_TO_POSITION));
+        elevator.setDirection(DcMotor.Direction.REVERSE);
         int numClicks = 0;
         elevatorPincher.setPosition(.3);
         waitForStart();
