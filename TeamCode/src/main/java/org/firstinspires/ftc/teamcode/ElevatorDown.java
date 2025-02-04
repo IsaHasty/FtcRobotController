@@ -9,9 +9,16 @@ public class ElevatorDown extends LinearOpMode {
     private DcMotor elevator;
     public void runOpMode(){
         elevator = hardwareMap.get(DcMotor.class, "elevator");
-        if(gamepad1.dpad_down){
-            elevator.setPower(-0.5);
+        waitForStart();
+        while(opModeIsActive()){
+            if(gamepad1.dpad_down){
+                elevator.setPower(0.5);
+            }
+            if(gamepad1.dpad_up){
+                elevator.setPower(0);
+            }
         }
+
     }
 
 }

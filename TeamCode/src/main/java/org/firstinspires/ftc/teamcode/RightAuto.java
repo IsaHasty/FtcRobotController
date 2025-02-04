@@ -16,7 +16,7 @@ public class RightAuto extends LinearOpMode {
     private DcMotor elevator;
     private Servo elevatorPincher;
     private DcMotor arm;
-    private Servo intakeGrabber;
+    private CRServo intakeSpinner;
 
     public void runOpMode(){
         //defines motors
@@ -27,10 +27,10 @@ public class RightAuto extends LinearOpMode {
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         elevatorPincher = hardwareMap.get(Servo.class, "elevatorPincher");
-        intakeGrabber = hardwareMap.get(Servo.class, "intakeGrabber");
+        intakeSpinner = hardwareMap.get(CRServo.class, "intakeSpinner");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setTargetPosition(3000);
         arm.setDirection(DcMotor.Direction.REVERSE);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -46,8 +46,12 @@ public class RightAuto extends LinearOpMode {
 
         while(opModeIsActive()){
             driveStraight(0.3, false);
-            sleep(270);
+            sleep(300);
             stopMotors();
+
+            lowerArm();
+            sleep(750);
+            arm.setPower(0);
 
             driveSideways(0.5,false); // Adjust the power value if needed
             sleep(800);
@@ -58,7 +62,7 @@ public class RightAuto extends LinearOpMode {
             stopMotors();
 
             raiseElevator();
-            sleep(1500);
+            sleep(5080);
 
             driveStraight(0.25, false);
             sleep(900);
@@ -95,22 +99,22 @@ public class RightAuto extends LinearOpMode {
             stopMotors();
 
             turn(0.5);
-            sleep(1400);
+            sleep(1350);
             stopMotors();
-            sleep(4000);
+            sleep(2000);
 
             setElevatorGrabbingPosition();
             sleep(300);
 
             //drive to grab second specimen
             driveStraight(0.25, false);
-            sleep(1725);
+            sleep(1625);
             stopMotors();
 
-            elevatorPincher.setPosition(0.35);
+            elevatorPincher.setPosition(0.3);
             sleep(400);
 
-            elevator.setTargetPosition(500);
+            elevator.setTargetPosition(2000);
             elevator.setPower(0.5);
             sleep(800);
 
@@ -123,15 +127,12 @@ public class RightAuto extends LinearOpMode {
 
             //turn around to park
             turn(0.5);
-            sleep(1250);
+            sleep(1350);
             stopMotors();
 
             driveSideways(0.3, true);
             sleep(1000);
             stopMotors();
-
-            lowerArm();
-            sleep(2000);
 
             // Optionally, you can break the loop if only one sequence is needed
             break;
@@ -183,26 +184,29 @@ public class RightAuto extends LinearOpMode {
         backLeft.setPower(tgtY+tgtX);
         backRight.setPower(tgtY-tgtX);
     }
-    public void setElevatorGrabbingPosition(){
-        elevator.setPower(.5);
-        elevator.setTargetPosition(200);
+    public void setElevatorGrabbingPosition(){ //sets elevator to grab from wall
+        if (elevator.getCurrentPosition() != 1550) { // Assuming 200 is the target
+            elevator.setPower(1);
+            elevator.setTargetPosition(1550);
+            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
-    public void raiseElevator(){
+    public void raiseElevator(){ //sets elevator to place on bar
         elevator.setPower(1);
-        elevator.setTargetPosition(1500);
+        elevator.setTargetPosition(10700);
     }
     public void lowerElevator(){
         elevator.setPower(1);
         elevator.setTargetPosition(0);
     }
-    public void releaseElevator(){
+    public void releaseElevator(){ //lowers elevator to put block on bar
         elevator.setPower(1);
-        elevator.setTargetPosition(1150);
-        sleep(500);
+        elevator.setTargetPosition(900);
+        sleep(1100);
         elevatorPincher.setPosition(0.8);
         sleep(500);
+        setElevatorGrabbingPosition();
     }
-
     public void changePincher(int numClicks){
         if(numClicks%2 ==0){
             elevatorPincher.setPosition(.8);

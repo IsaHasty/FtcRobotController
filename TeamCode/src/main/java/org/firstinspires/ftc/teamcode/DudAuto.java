@@ -16,7 +16,7 @@ public class DudAuto extends LinearOpMode {
     private DcMotor elevator;
     private Servo elevatorPincher;
     private DcMotor arm;
-    private Servo intakeGrabber;
+    private CRServo intakeSpinner;
 
     public void runOpMode(){
         //defines motors
@@ -27,10 +27,10 @@ public class DudAuto extends LinearOpMode {
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         elevatorPincher = hardwareMap.get(Servo.class, "elevatorPincher");
-        intakeGrabber = hardwareMap.get(Servo.class, "intakeGrabber");
+        intakeSpinner = hardwareMap.get(CRServo.class, "intakeSpinner");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setTargetPosition(3000);
         arm.setDirection(DcMotor.Direction.REVERSE);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -48,9 +48,6 @@ public class DudAuto extends LinearOpMode {
             driveStraight(0.5, false);
             sleep(250);
             stopMotors();
-
-            lowerArm();
-            sleep(2000);
 
             // Optionally, you can break the loop if only one sequence is needed
             break;
@@ -129,15 +126,6 @@ public class DudAuto extends LinearOpMode {
         }
         else{
             elevatorPincher.setPosition(.3);
-        }
-    }
-
-    public void changeIntake(boolean isIntakeTurning){
-        if(isIntakeTurning){
-            intakeGrabber.setPosition(-1);
-        }
-        else{
-            intakeGrabber.setPosition(0);
         }
     }
 

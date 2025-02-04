@@ -17,7 +17,8 @@ public class DriveMainTEST extends LinearOpMode {
     private DcMotor elevator;
     private Servo elevatorPincher;
     private DcMotor arm;
-    private Servo intakeGrabber;
+    private CRServo intakeSpinner;
+    //private CRServo armTelescope;
 
     public void runOpMode() {
         //defines motors
@@ -28,21 +29,23 @@ public class DriveMainTEST extends LinearOpMode {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         elevatorPincher = hardwareMap.get(Servo.class, "elevatorPincher");
-        intakeGrabber = hardwareMap.get(Servo.class, "intakeGrabber");
+        intakeSpinner = hardwareMap.get(CRServo.class, "intakeSpinner");
+        intakeSpinner.setDirection(DcMotorSimple.Direction.REVERSE);
 
         arm = hardwareMap.get(DcMotor.class, "arm");
         arm.setDirection(DcMotor.Direction.REVERSE);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //armTelescope = hardwareMap.get(CRServo.class, "armTelescope");
 
         elevator = hardwareMap.get(DcMotor.class, "elevator");
         elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevator.setTargetPosition(0);
-        elevator.setDirection(DcMotor.Direction.REVERSE);
+       // elevator.setDirection(DcMotor.Direction.REVERSE);
         elevator.setMode((DcMotor.RunMode.RUN_TO_POSITION));
         int numClicks = 0;
-        elevatorPincher.setPosition(0.5);
+        elevatorPincher.setPosition(.3);
         waitForStart();
 
 
@@ -51,6 +54,7 @@ public class DriveMainTEST extends LinearOpMode {
         double tgtPowerSide = 0.0;
         boolean isReversed = false;
         boolean isIntakeTurning = false;
+        boolean isIntakeTurningReverse = false;
 
         while (opModeIsActive()){
             if(gamepad1.right_bumper){
@@ -83,7 +87,6 @@ public class DriveMainTEST extends LinearOpMode {
 
             driveSideways(tgtPowerSide, isReversed);
 
-
             if(gamepad1.x){
                 releaseElevator();
             }
@@ -95,20 +98,26 @@ public class DriveMainTEST extends LinearOpMode {
             if (gamepad1.a) {
                 setElevatorGrabbingPosition();
             }
+
             if (gamepad1.b) {
                 numClicks++;
                 sleep(200);
                 changePincher(numClicks);
             }
 
+            if (gamepad1.left_bumper) {
+                setElevatorZero();
+                sleep(200);
+            }
             if(gamepad2.b){
                 isIntakeTurning = !isIntakeTurning;
                 sleep(200);
                 changeIntake(isIntakeTurning);
             }
-            if(gamepad2.left_bumper){
+            if(gamepad2.dpad_left){
+                isIntakeTurningReverse = !isIntakeTurningReverse;
                 sleep(200);
-                changeIntake(isIntakeTurning);
+                changeIntake(isIntakeTurningReverse);
             }
 
             if(gamepad2.a){
@@ -120,7 +129,12 @@ public class DriveMainTEST extends LinearOpMode {
             if(gamepad2.y){
                 armUp();
             }
-
+            if(gamepad2.left_bumper){
+                isIntakeTurningReverse=!isIntakeTurningReverse;
+                sleep(200);
+                reverseIntake(isIntakeTurningReverse);
+            }
+            //armTelescope.setPower(gamepad2.left_stick_y);
 
             //lets us manually control elevator position
             int targetPosition = elevator.getCurrentPosition();
@@ -181,26 +195,29 @@ public class DriveMainTEST extends LinearOpMode {
         }
     }
 
-    public void setElevatorGrabbingPosition(){ // this function raises the elevator
-        if (elevator.getCurrentPosition() != 225) { // Assuming 200 is the target
-            elevator.setPower(0.5);
-            elevator.setTargetPosition(225);
+    public void setElevatorGrabbingPosition(){ //sets elevator to grab from wall
+        if (elevator.getCurrentPosition() != 300) { // Assuming 200 is the target
+            elevator.setPower(1);
+            elevator.setTargetPosition(300);
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
-    public void raiseElevator(){
-        elevator.setPower(0.5);
-        elevator.setTargetPosition(1600);
+    public void raiseElevator(){ //sets elevator to place on bar
+        elevator.setPower(1);
+        elevator.setTargetPosition(800);
     }
-    public void releaseElevator(){
-        elevator.setPower(0.5);
-        elevator.setTargetPosition(1150);
-        sleep(500);
+    public void releaseElevator(){ //lowers elevator to put block on bar
+        elevator.setPower(1);
+        elevator.setTargetPosition(400);
+        sleep(400);
         elevatorPincher.setPosition(0.8);
-        sleep(500);
+        sleep(200);
         setElevatorGrabbingPosition();
     }
-
+    public void setElevatorZero(){
+        elevator.setPower(1);
+        elevator.setTargetPosition(0);
+    }
     public void changePincher(int numClicks){
         if(numClicks%2 ==0){
             elevatorPincher.setPosition(.8);
@@ -212,21 +229,30 @@ public class DriveMainTEST extends LinearOpMode {
 
     public void changeIntake(boolean isIntakeTurning){
         if(isIntakeTurning){
-            intakeGrabber.setPosition(.5);
+            intakeSpinner.setPower(1);
         }
         else{
-            intakeGrabber.setPosition(.1);
+            intakeSpinner.setPower(0);
+        }
+    }
+
+    public void reverseIntake(boolean isIntakeTurning){
+        if(isIntakeTurning){
+            intakeSpinner.setPower(-1);
+        }
+        else{
+            intakeSpinner.setPower(0);
         }
     }
 
     public void armUp(){
         arm.setPower(0.5);
-        arm.setTargetPosition(2600);
+        arm.setTargetPosition(2300);
     }
 
     public void armDown(){
         arm.setPower(0.5);
-        arm.setTargetPosition(20);
+        arm.setTargetPosition(0);
     }
 
     public void armOut(){
@@ -238,4 +264,5 @@ public class DriveMainTEST extends LinearOpMode {
         arm.setPower(0.5);
         arm.setTargetPosition(3400);
     }
+
 }
