@@ -46,7 +46,7 @@ public class DriveMainTEST extends LinearOpMode {
        // elevator.setDirection(DcMotor.Direction.REVERSE);
         elevator.setMode((DcMotor.RunMode.RUN_TO_POSITION));
         elevator.setDirection(DcMotor.Direction.REVERSE);
-        int numClicks = 0;
+        int numClicks = 1;
         elevatorPincher.setPosition(.3);
         waitForStart();
 
@@ -91,6 +91,8 @@ public class DriveMainTEST extends LinearOpMode {
 
             if(gamepad1.x){
                 releaseElevator();
+                numClicks++;
+                sleep(200);
             }
 
             if (gamepad1.y) {
@@ -103,7 +105,7 @@ public class DriveMainTEST extends LinearOpMode {
 
             if (gamepad1.b) {
                 numClicks++;
-                sleep(200);
+                sleep(300);
                 changePincher(numClicks);
             }
 
@@ -198,15 +200,15 @@ public class DriveMainTEST extends LinearOpMode {
     }
 
     public void setElevatorGrabbingPosition(){ //sets elevator to grab from wall
-        if (elevator.getCurrentPosition() != 300) { // Assuming 200 is the target
+        if (elevator.getCurrentPosition() != 450) { // Assuming 200 is the target
             elevator.setPower(1);
-            elevator.setTargetPosition(300);
+            elevator.setTargetPosition(450);
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
     public void raiseElevator(){ //sets elevator to place on bar
         elevator.setPower(1);
-        elevator.setTargetPosition(800);
+        elevator.setTargetPosition(3000);
     }
     public void releaseElevator(){ //lowers elevator to put block on bar
         elevator.setPower(1);
